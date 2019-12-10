@@ -1,9 +1,48 @@
-cmake_minimum_required(VERSION 2.8.3)
-
+cmake_minimum_required(VERSION 3.5)
 project(audio_common_msgs)
 
-find_package(catkin REQUIRED COMPONENTS message_generation)
-add_message_files(DIRECTORY msg FILES AudioData.msg)
-generate_messages()
+# Default to C99
+if(NOT CMAKE_C_STANDARD)
+  set(CMAKE_C_STANDARD 99)
+endif()
 
-catkin_package(CATKIN_DEPENDS message_runtime)
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+# need this for building messages
+find_package(rosidl_default_generators REQUIRED)
+
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # uncomment the line when a copyright and license is not present in all source files
+  #set(ament_cmake_copyright_FOUND TRUE)
+  # the following line skips cpplint (only works in a git repo)
+  # uncomment the line when this package is not in a git repo
+  #set(ament_cmake_cpplint_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+# add list of msgs
+set(msg_files
+  "msg/AudioData.msg"
+)
+
+# generate msgs
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${msg_files}
+)
+# export message dep
+ament_export_dependencies(rosidl_default_runtime)
+
+ament_package()
